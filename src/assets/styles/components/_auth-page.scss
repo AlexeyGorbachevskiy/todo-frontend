@@ -1,43 +1,93 @@
 
 
-.auth-page-content{
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .login-form{
-    width: 400px;
-    background-color: #ffffff;
-    border-radius: 3px;
-    padding: 25px 40px;
-    box-shadow: rgb(0 0 0 / 10%) 0 0 10px;
-    box-sizing: border-box;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .login-header{
-      text-align: center;
-      color: #5E6C84;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-      line-height: 28px;
-      margin-top: 10px;
-      margin-bottom: 25px;
-    }
-
-    .inputs-wrapper{
-      display: flex;
-      flex-direction: column;
+  .auth-page-content{
+    .logo-wrapper {
+      max-width: 400px;
       width: 100%;
-    }
 
-    .buttons-wrapper{
-      width: 100%;
-      margin: 15px 0;
+      position: absolute;
+      z-index: -100;
+      top: 13%;
+      color: #22cfc8;
+      //color: #059dcb;
+      font-size: 30px;
+      font-family: "Comic Sans MS", "Copperplate Gothic Bold", sans-serif;
+      font-weight: 900;
+
       display: flex;
+      justify-content: center;
       align-items: center;
 
+      .logo {
+        margin-left: 15px;
+        height: 50px;
+        width: 50px;
+      }
+    }
+
+    .login-form{
+      width: 400px;
+      background-color: #ffffff;
+      border-radius: 3px;
+      padding: 25px 40px;
+      box-shadow: rgb(0 0 0 / 10%) 0 0 10px;
+      box-sizing: border-box;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .login-header{
+        text-align: center;
+        color: #5E6C84;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+        line-height: 28px;
+        margin-top: 10px;
+        margin-bottom: 25px;
+      }
+
+      .inputs-wrapper{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .buttons-wrapper{
+        width: 100%;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+
+      }
+    }
+
+    .left {
+      position: absolute;
+      z-index: -100;
+      left: 3%;
+      bottom: 3%;
+      height: 250px;
+      width: 350px;
+    }
+
+    .right {
+      position: absolute;
+      z-index: -100;
+      right: 3%;
+      bottom: .5%;
+
+      height: 250px;
+      width: 350px;
     }
   }
 }
+
 

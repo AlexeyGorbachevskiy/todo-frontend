@@ -3,7 +3,6 @@ import {BrowserRouter as Router} from 'react-router-dom'
 import {useRoutes} from './routes'
 import {AuthContext} from './context/AuthContext'
 import {useAuth} from "./hooks/useAuth";
-import {Navbar} from "./components/Navbar";
 import {Container} from "./components/Container";
 
 function App() {
@@ -20,7 +19,7 @@ function App() {
             token, login, logout, userId, isAuthenticated
         }}>
             <Router>
-                { isAuthenticated && <Navbar /> }
+                {/*{ isAuthenticated && <Navbar /> }*/}
                 <Container>
                     {routes}
                 </Container>

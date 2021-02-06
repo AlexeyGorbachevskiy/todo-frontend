@@ -8,6 +8,9 @@ import '../assets/styles/components/_auth-page.scss';
 import '../assets/styles/components/_input.scss';
 import '../assets/styles/components/_button.scss';
 import {Button} from "../components/Button";
+import logo from "../assets/images/logo.jpg";
+import left from "../assets/images/left.png";
+import right from "../assets/images/right.png";
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext);
@@ -43,8 +46,12 @@ export const AuthPage = () => {
     }
 
     return (
-        <Container>
+        <Container className="container">
             <div className="auth-page-content">
+                <div className="logo-wrapper">
+                    ToDo App
+                    <img className="logo" src={logo} alt="Logo"/>
+                </div>
                 <div className="login-form">
                     <h1 className="login-header">Sign In to App</h1>
                     <div className="inputs-wrapper">
@@ -88,6 +95,8 @@ export const AuthPage = () => {
                         </Button>
                     </div>
                 </div>
+                <img className="left" src={left} alt="Left image"/>
+                <img className="right" src={right} alt="Right image"/>
             </div>
 
 
