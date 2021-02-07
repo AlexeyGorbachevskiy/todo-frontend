@@ -1,7 +1,6 @@
 
 .container {
-
-  color: green;
+  color: #ffffff;
   display: block;
 
   .todos-page-content {
@@ -102,8 +101,62 @@
       height: 100%;
       margin: 120px 0;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
+
+      .todos-creator{
+        z-index: 0;
+        position: sticky;
+        top: 120px;
+        margin-bottom: 20px;
+        height: 50px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .todos-creator__label{
+          //margin-right: 40%;
+          padding: 10px;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 18px;
+          line-height: 20px;
+          display: flex;
+          align-items: center;
+          color: #FFFFFF;
+          background: #2b2bc6;
+          border-radius: 15px;
+        }
+
+        .todos-creator__create{
+          width: 500px;
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
+
+          .input{
+            margin: 0;
+            width: 50%;
+            height: 35px;
+          }
+          .todos-creator__label{
+            cursor: pointer;
+            background: #2b2bc6;
+            border-radius: 15px;
+          }
+        }
+
+      }
+
+      .todos{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 40px;
+      }
 
     }
 

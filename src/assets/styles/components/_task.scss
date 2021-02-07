@@ -1,0 +1,36 @@
+
+
+.task{
+  cursor: pointer;
+  margin-top: 20px;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .task-title{
+
+    display: flex;
+    word-break: break-word;
+    flex-wrap: wrap;
+    margin-right: 10px;
+  }
+
+  .task-label{
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    .task-dot{
+      height: 3px;
+      width: 3px;
+      border-radius: 50%;
+      background-color: #ffffff;
+    }
+  }
+
+}

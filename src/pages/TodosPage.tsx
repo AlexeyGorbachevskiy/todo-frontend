@@ -12,6 +12,9 @@ import logout from "../assets/images/logout.svg";
 import facebook from "../assets/images/facebook.png";
 import vk from "../assets/images/vk.png";
 import telegram from "../assets/images/telegram.png";
+import {Todo} from "../components/Todo";
+import {Input} from "../components/Input";
+import '../assets/styles/components/_input.scss';
 
 export function TodosPage() {
     const auth = useContext(AuthContext);
@@ -61,6 +64,32 @@ export function TodosPage() {
                 </Header>
 
                 <div className="todos-wrapper">
+                    <div className="todos-creator">
+                        <div className="todos-creator__label">Todo List</div>
+                        <div className="todos-creator__create">
+                            <Input className="input"/>
+                            <p className="todos-creator__label">+ Create Todo</p>
+                        </div>
+                    </div>
+
+                    <div className="todos">
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                        <Todo/>
+                    </div>
 
                 </div>
 
