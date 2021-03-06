@@ -3,7 +3,7 @@ import {useMessage} from "../hooks/useMessage";
 import {useFetch} from "../hooks/useFetch";
 import {AuthContext} from "../context/AuthContext";
 import {Input} from "../components/Input";
-import {Container} from "../components/Container";
+import {Container as NativeContainer} from "../components/Container";
 import '../assets/styles/components/_auth-page.scss';
 import '../assets/styles/components/_input.scss';
 import '../assets/styles/components/_button.scss';
@@ -11,6 +11,13 @@ import {Button} from "../components/Button";
 import logo from "../assets/images/logo.jpg";
 import left from "../assets/images/left.png";
 import right from "../assets/images/right.png";
+import styled from "styled-components";
+
+const Container = styled(NativeContainer)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext);

@@ -18,6 +18,7 @@ export const RadioWrapper = styled.input`
         top: -2px;
         left: -1px;
         position: relative;
+        z-index: 1;
         background-color: #ffffff;
         content: '';
         display: inline-block;
@@ -32,7 +33,8 @@ export const RadioWrapper = styled.input`
         top: -2px;
         left: -1px;
         position: relative;
-        background-color: #ffa500;
+        z-index: 1;
+        background-color: ${({radioBackground}) => radioBackground || COLORS.orange};
         content: '';
         display: inline-block;
         visibility: visible;
@@ -40,7 +42,7 @@ export const RadioWrapper = styled.input`
     }
  
 `;
-export const Radio = ({name, checked, value, id, onChange}: RadioProps) => {
+export const Radio = ({name, checked, value, id, onChange, radioBackground}: RadioProps) => {
     return (
         <RadioWrapper
             className="radio"
@@ -50,6 +52,7 @@ export const Radio = ({name, checked, value, id, onChange}: RadioProps) => {
             value={value}
             id={id}
             onChange={onChange}
+            radioBackground={radioBackground}
         />
     )
 }
@@ -61,6 +64,7 @@ type RadioProps = {
     checked?: boolean
     value?: string
     onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+    radioBackground?: string
 }
 
 type RadioWrapperProps = {
@@ -71,4 +75,5 @@ type RadioWrapperProps = {
     checked?: boolean
     value?: string
     onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+    radioBackground?: string
 }

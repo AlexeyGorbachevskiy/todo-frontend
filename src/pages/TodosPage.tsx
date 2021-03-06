@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
-import {useFetch} from "../hooks/useFetch";
 import {AuthContext} from "../context/AuthContext";
-import {Container} from "../components/Container";
+import {Container as NativeContainer} from "../components/Container";
 import {COLORS} from "../constants/styles";
 import {useHistory} from "react-router-dom";
 import '../assets/styles/components/_todos-page.scss';
@@ -15,33 +14,37 @@ import telegram from "../assets/images/telegram.png";
 import {Todo} from "../components/Todo";
 import {Input} from "../components/Input";
 import '../assets/styles/components/_input.scss';
+import {getInputValue} from "../helpers/helpers";
+import {$newTodoName, $todos, onAddNewTodo, onNewTodoNameChange, setToken} from "../@/todos/model";
+import {useStore} from "effector-react";
+import '../@/todos/init';
+import styled from "styled-components";
+
+
+const Container = styled(NativeContainer)`
+  color: #ffffff;
+  display: block;
+  height: unset;
+  min-height: calc(100vh - 120px);
+`;
 
 export function TodosPage() {
+
     const auth = useContext(AuthContext);
-    const {request} = useFetch();
     const history = useHistory();
+
+    const todos = useStore($todos);
+    const newTodoName = useStore($newTodoName);
+    const handleNewTodoNameChange = onNewTodoNameChange.prepend(getInputValue);
+
+    if(auth && auth.token){
+        setToken(auth.token)
+    }
 
     const logoutHandler = (event: any) => {
         event.preventDefault();
         auth.logout();
         history.push('/');
-    }
-
-    const submit = () => {
-        (async () => {
-            try {
-                console.log('hi')
-                const data = await request('/api/todos', 'DELETE', {
-                    todoId: 'a6d70cd0-63f9-11eb-9498-012484a403c4'
-
-                }, {
-                    Authorization: `Bearer ${auth.token}`
-                })
-                console.log(data)
-            } catch (e) {
-                console.log(e)
-            }
-        })();
     }
 
     return (
@@ -67,12 +70,19 @@ export function TodosPage() {
                     <div className="todos-creator">
                         <div className="todos-creator__label">Todo List</div>
                         <div className="todos-creator__create">
-                            <Input className="input"/>
-                            <p className="todos-creator__label">+ Create Todo</p>
+                            <Input className="input" value={newTodoName} onChange={handleNewTodoNameChange}/>
+                            <button className="todos-creator__label" onClick={onAddNewTodo}>+ Create Todo</button>
                         </div>
                     </div>
 
                     <div className="todos">
+                        {
+                            todos.map((todo, index)=>{
+                                return (
+                                    <Todo key={index}/>
+                                )
+                            })
+                        }
                         <Todo/>
                         <Todo/>
                         <Todo/>

@@ -1,7 +1,5 @@
 
 .container {
-  color: #ffffff;
-  display: block;
 
   .todos-page-content {
     width: 100%;
@@ -11,6 +9,7 @@
     .header {
       position: fixed;
       top: 0;
+      z-index: 2;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -106,9 +105,9 @@
       align-items: center;
 
       .todos-creator{
-        z-index: 0;
-        position: sticky;
-        top: 120px;
+        //position: sticky;
+        //top: 120px;
+        //z-index: 2;
         margin-bottom: 20px;
         height: 50px;
         width: 100%;
@@ -145,6 +144,8 @@
             cursor: pointer;
             background: #2b2bc6;
             border-radius: 15px;
+            outline: none;
+            border: none;
           }
         }
 
@@ -164,6 +165,7 @@
     .footer {
       position: fixed;
       bottom: 0;
+      z-index: 2;
       display: flex;
       justify-content: space-around;
       align-items: center;

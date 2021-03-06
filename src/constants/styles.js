@@ -12,4 +12,5 @@ export const COLORS = {
     blue: '#5684f6',
     white: '#ffffff',
     green: '#5AAC44',
+    orange: '#ffa500',
 };

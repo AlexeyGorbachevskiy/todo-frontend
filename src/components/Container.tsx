@@ -6,7 +6,7 @@ const CustomContainer = styled.div`
   position: relative;
   z-index: 0;
   width: 100%;
-  min-height: calc(100vh-120px);
+  height: 100vh;
   font-family: "Comic Sans MS", sans-serif;
   background-color: ${({backgroundColor}: CustomContainerProps) => backgroundColor || COLORS.base};
 `;

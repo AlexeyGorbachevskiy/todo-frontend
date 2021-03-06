@@ -10,6 +10,7 @@ export const useRoutes = (isAuthenticated: boolean) => {
                 <Route path="/todos" exact>
                     <TodosPage/>
                 </Route>
+                <Redirect to="/todos" />
             </Switch>
         )
     }
@@ -17,10 +18,9 @@ export const useRoutes = (isAuthenticated: boolean) => {
     return (
         <Switch>
             <Route path="/" exact>
-                {/*<AuthPage/>*/}
-                <TodosPage/>
+                <AuthPage/>
             </Route>
-            <Redirect to="/"/>
+            <Redirect to="/" />
         </Switch>
     )
 }

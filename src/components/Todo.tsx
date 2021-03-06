@@ -22,7 +22,7 @@ export const Todo = ({}: TodoProps) => {
 
 
     const [radio, setRadio] = useState<string>('All');
-    const handleRadioChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const onRadioChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {value} = e.target;
         setRadio(value);
     }
@@ -44,17 +44,17 @@ export const Todo = ({}: TodoProps) => {
             <div className="todo-task-group">
                 <label htmlFor={all} className="todo-label">
                     All
-                    <Radio id={all} name={name} value="All" onChange={handleRadioChange} checked={radio === "All"}/>
+                    <Radio id={all} name={name} value="All" onChange={onRadioChange} checked={radio === "All"} radioBackground={COLORS.blueMain}/>
                 </label>
                 <label htmlFor={progress} className="todo-label">
                     Progress
-                    <Radio id={progress} name={name} value="Progress" onChange={handleRadioChange}
-                           checked={radio === "Progress"}/>
+                    <Radio id={progress} name={name} value="Progress" onChange={onRadioChange}
+                           checked={radio === "Progress"} radioBackground={COLORS.orange}/>
                 </label>
                 <label htmlFor={completed} className="todo-label">
                     Completed
-                    <Radio id={completed} name={name} value="Completed" onChange={handleRadioChange}
-                           checked={radio === "Completed"}/>
+                    <Radio id={completed} name={name} value="Completed" onChange={onRadioChange}
+                           checked={radio === "Completed"} radioBackground={COLORS.green}/>
                 </label>
             </div>
 

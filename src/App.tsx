@@ -3,15 +3,25 @@ import {BrowserRouter as Router} from 'react-router-dom'
 import {useRoutes} from './routes'
 import {AuthContext} from './context/AuthContext'
 import {useAuth} from "./hooks/useAuth";
+import {Loader} from "./components/Loader";
 import {Container} from "./components/Container";
+import {setToken} from "./@/todos/model";
 
 function App() {
     const {token, login, logout, userId, ready} = useAuth();
     const isAuthenticated = !!token;
     const routes = useRoutes(isAuthenticated);
 
+    if(token){
+        setToken(token)
+    }
+
     if (!ready) {
-        // return <Loader />
+        return (
+            <Container>
+                <Loader/>
+            </Container>
+        )
     }
 
     return (
@@ -19,10 +29,7 @@ function App() {
             token, login, logout, userId, isAuthenticated
         }}>
             <Router>
-                {/*{ isAuthenticated && <Navbar /> }*/}
-                <Container>
-                    {routes}
-                </Container>
+                {routes}
             </Router>
         </AuthContext.Provider>
     )
