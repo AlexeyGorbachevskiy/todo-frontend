@@ -5,7 +5,7 @@ import {AuthContext} from './context/AuthContext'
 import {useAuth} from "./hooks/useAuth";
 import {Loader} from "./components/Loader";
 import {Container} from "./components/Container";
-import {setToken} from "./@/todos/model";
+import {$token, setToken} from "./@/todos/model";
 
 function App() {
     const {token, login, logout, userId, ready} = useAuth();
@@ -15,6 +15,7 @@ function App() {
     if(token){
         setToken(token)
     }
+    console.log($token.getState())
 
     if (!ready) {
         return (

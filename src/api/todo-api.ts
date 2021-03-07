@@ -2,15 +2,33 @@ import {createEffect} from "effector";
 import {request} from "./request";
 
 
+
+export const getAllTodosFx = createEffect(
+    async (token: string | null) => {
+        let result = null;
+        try {
+            result = await request(
+                '/api/todos',
+                'GET',
+                null,
+                {Authorization: `Bearer ${token}`});
+            return result;
+        } catch (e) {
+            console.log(e)
+            throw e;
+        }
+    }
+);
+
 export const addNewTodoFx = createEffect(
-    async (data: any) => {
-        const [todoName, token] = data;
+    async (data: Array<any>) => {
+        const [name, token] = data;
         let result = null;
         try {
             result = await request(
                 '/api/todos',
                 'POST',
-                {todoName},
+                {name},
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {

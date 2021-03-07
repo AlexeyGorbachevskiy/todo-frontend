@@ -1,0 +1,12 @@
+
+
+.popup{
+
+  .todo-popup-btn{
+    cursor: pointer;
+    transition: all ease-in-out .3s;
+    &:hover{
+      color: #e94d4d;
+    }
+  }
+}

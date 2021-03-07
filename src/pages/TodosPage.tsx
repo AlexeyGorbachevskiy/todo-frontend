@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AuthContext} from "../context/AuthContext";
 import {Container as NativeContainer} from "../components/Container";
 import {COLORS} from "../constants/styles";
@@ -15,7 +15,7 @@ import {Todo} from "../components/Todo";
 import {Input} from "../components/Input";
 import '../assets/styles/components/_input.scss';
 import {getInputValue} from "../helpers/helpers";
-import {$newTodoName, $todos, onAddNewTodo, onNewTodoNameChange, setToken} from "../@/todos/model";
+import {$newTodoName, $todos, getAllTodos, onAddNewTodo, onNewTodoNameChange, setToken} from "../@/todos/model";
 import {useStore} from "effector-react";
 import '../@/todos/init';
 import styled from "styled-components";
@@ -40,6 +40,12 @@ export function TodosPage() {
     if(auth && auth.token){
         setToken(auth.token)
     }
+
+
+    useEffect(() => {
+        getAllTodos();
+    }, []);
+
 
     const logoutHandler = (event: any) => {
         event.preventDefault();
@@ -83,22 +89,22 @@ export function TodosPage() {
                                 )
                             })
                         }
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
-                        <Todo/>
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
+                        {/*<Todo/>*/}
                     </div>
 
                 </div>

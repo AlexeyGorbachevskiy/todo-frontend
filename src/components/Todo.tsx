@@ -5,9 +5,12 @@ import '../assets/styles/components/_todo.scss';
 import {Task} from "./Task";
 import {Radio} from "./Radio";
 import {v1} from "uuid";
+import {Popup} from "./Popup";
 
 
 const TodoWrapper = styled.div`
+  position: relative;
+  
   width: 280px;
   min-height: 50px;
   border-radius: 15px;
@@ -20,31 +23,60 @@ export const Todo = ({}: TodoProps) => {
     const progress = v1();
     const completed = v1();
 
-
+    const [isOpenPopup, setPopupOpen] = useState(false);
     const [radio, setRadio] = useState<string>('All');
     const onRadioChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {value} = e.target;
         setRadio(value);
     }
+    const onOpenClosePopup = () => {
+        setPopupOpen(!isOpenPopup);
+        document.removeEventListener('click', outsideClickListener);
+    }
+
+    useEffect(() => {
+        document.addEventListener('click', outsideClickListener);
+    }, [isOpenPopup]);
+
+    const outsideClickListener = (e: any) => {
+        const popups = document.querySelectorAll('.popup');
+
+        if (popups && isOpenPopup) {
+            let needClose = true;
+            popups.forEach(popup => {
+                if (popup.contains(e.target)) {
+                    needClose = false;
+                }
+            })
+            if (needClose) {
+                setPopupOpen(false);
+                document.removeEventListener('click', outsideClickListener);
+            }
+
+        }
+    }
 
     return (
         <TodoWrapper className="todo">
+
+            <Popup className='popup' isOpen={isOpenPopup}/>
 
             <div className="todo-header">
                 <div className="todo-title">
                     Tran Mau Tri Tam
                 </div>
-                <div className="menu-icon">
-                    <div className="todo-dot"/>
-                    <div className="todo-dot"/>
-                    <div className="todo-dot"/>
+                <div className="menu-icon" onClick={onOpenClosePopup}>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
                 </div>
             </div>
 
             <div className="todo-task-group">
                 <label htmlFor={all} className="todo-label">
                     All
-                    <Radio id={all} name={name} value="All" onChange={onRadioChange} checked={radio === "All"} radioBackground={COLORS.blueMain}/>
+                    <Radio id={all} name={name} value="All" onChange={onRadioChange} checked={radio === "All"}
+                           radioBackground={COLORS.blueMain}/>
                 </label>
                 <label htmlFor={progress} className="todo-label">
                     Progress
