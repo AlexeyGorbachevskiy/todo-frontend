@@ -6,6 +6,8 @@ import {Task} from "./Task";
 import {Radio} from "./Radio";
 import {v1} from "uuid";
 import {Popup} from "./Popup";
+import {onRemoveTodo} from "../@/todos/model";
+import {addNewTaskFx} from "../api/todo-api";
 
 
 const TodoWrapper = styled.div`
@@ -17,7 +19,9 @@ const TodoWrapper = styled.div`
   background-color: ${({backgroundColor}: TodoWrapperProps) => backgroundColor || COLORS.base};
 `;
 
-export const Todo = ({}: TodoProps) => {
+export const Todo = ({id, todoName, tasks}: TodoProps) => {
+
+    // Radio
     const name = v1();
     const all = v1();
     const progress = v1();
@@ -30,9 +34,29 @@ export const Todo = ({}: TodoProps) => {
         setRadio(value);
     }
     const onOpenClosePopup = () => {
+        console.log(isOpenPopup)
         setPopupOpen(!isOpenPopup);
         document.removeEventListener('click', outsideClickListener);
     }
+
+    const onTodoRemove = () => {
+        onRemoveTodo(id);
+        setPopupOpen(false);
+        document.removeEventListener('click', outsideClickListener);
+    }
+
+    const [isAddTaskPending, setAddTaskPending] = useState(false);
+    const onAddTask = () => {
+        setAddTaskPending(true);
+        setPopupOpen(false);
+        document.removeEventListener('click', outsideClickListener);
+    }
+
+    const todoPopupItems = [{name: 'Add task', handler: onAddTask}, {name: 'Rename'}, {name: 'Move to'},
+        {
+            name: 'Remove',
+            handler: onTodoRemove
+        }];
 
     useEffect(() => {
         document.addEventListener('click', outsideClickListener);
@@ -56,19 +80,26 @@ export const Todo = ({}: TodoProps) => {
         }
     }
 
+    addNewTaskFx.done.watch((result) => {
+        if (result && result.result && result.result.allTasks.length) {
+            setAddTaskPending(false);
+        }
+    });
+
     return (
         <TodoWrapper className="todo">
 
-            <Popup className='popup' isOpen={isOpenPopup}/>
+            <Popup className='popup' isOpen={isOpenPopup} items={todoPopupItems}/>
 
             <div className="todo-header">
                 <div className="todo-title">
-                    Tran Mau Tri Tam
+                    {todoName}
+                    {/*Tran Mau Tri Tam*/}
                 </div>
                 <div className="menu-icon" onClick={onOpenClosePopup}>
-                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
-                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
-                    <div style={isOpenPopup ? {backgroundColor: '#fff' } : {}} className="todo-dot"/>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff'} : {}} className="todo-dot"/>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff'} : {}} className="todo-dot"/>
+                    <div style={isOpenPopup ? {backgroundColor: '#fff'} : {}} className="todo-dot"/>
                 </div>
             </div>
 
@@ -91,11 +122,16 @@ export const Todo = ({}: TodoProps) => {
             </div>
 
             <div className="todo-main">
-                <Task/>
-                <Task/>
-                <Task/>
-                <Task/>
-
+                {
+                    isAddTaskPending && <Task isAddTaskPending todoId={id}/>
+                }
+                {
+                    tasks?.map((task) =>
+                        (
+                            <Task key={task.id} id={task.id} todoId={id} name={task.name}/>
+                        )
+                    )
+                }
                 {/*No tasks added*/}
             </div>
 
@@ -104,7 +140,11 @@ export const Todo = ({}: TodoProps) => {
 }
 
 
-type TodoProps = {}
+type TodoProps = {
+    todoName: string
+    tasks?: Array<any>
+    id: string
+}
 
 type TodoWrapperProps = {
     backgroundColor?: string;

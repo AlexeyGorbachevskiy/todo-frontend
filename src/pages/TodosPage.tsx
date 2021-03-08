@@ -46,12 +46,12 @@ export function TodosPage() {
         getAllTodos();
     }, []);
 
-
     const logoutHandler = (event: any) => {
         event.preventDefault();
         auth.logout();
         history.push('/');
     }
+
 
     return (
         <Container className="container" backgroundColor={COLORS.darkMain}>
@@ -83,28 +83,12 @@ export function TodosPage() {
 
                     <div className="todos">
                         {
-                            todos.map((todo, index)=>{
+                            todos.map((todo)=>{
                                 return (
-                                    <Todo key={index}/>
+                                    <Todo key={todo.id} id={todo.id} tasks={todo.tasks} todoName={todo.name}/>
                                 )
                             })
                         }
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
-                        {/*<Todo/>*/}
                     </div>
 
                 </div>

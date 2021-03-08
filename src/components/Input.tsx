@@ -8,15 +8,15 @@ const CustomInput = styled.input`
    height: 44px;
    padding: .5em;
    margin: 0 0 1.2em;
-   background-color: ${()=>COLORS.lightGrey};
-   border: 2px solid ${()=>COLORS.grey};
+   background-color: ${({}: InputPropsType) => COLORS.lightGrey};
+   border: 2px solid ${() => COLORS.grey};
    font-size: 14px;
    border-radius: 3px;
    transition: background-color .2s ease-in-out 0s, border-color .2s ease-in-out 0s;
  
   &:focus {
-    background-color: ${()=>COLORS.white};
-    border-color: ${()=>COLORS.blue};
+    background-color: ${() => COLORS.white};
+    border-color: ${() => COLORS.blue};
   }
 `;
 
@@ -29,7 +29,18 @@ export const Input =
          className,
          value,
          onChange,
+         autoFocus,
+         onBlur,
+         onEnter,
+         inputRef
      }: InputPropsType) => {
+
+        const onEnterPress = (e: any) => {
+            if (e.key === 'Enter') {
+                onEnter && onEnter()
+            }
+        }
+
         return (
             <CustomInput
                 placeholder={placeholder}
@@ -39,9 +50,13 @@ export const Input =
                 className={className}
                 value={value}
                 onChange={onChange}
+                autoFocus={autoFocus}
+                onBlur={onBlur}
+                onKeyPress={onEnterPress}
+                ref={inputRef}
             />
         )
     }
 
 export type InputPropsType = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-    & { onEnter?: () => void, error?: string };
+    & { onEnter?: () => void, error?: string, inputRef?: any };

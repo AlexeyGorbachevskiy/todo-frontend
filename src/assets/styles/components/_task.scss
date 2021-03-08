@@ -8,12 +8,22 @@
   justify-content: space-between;
   align-items: center;
 
+  position: relative;
+
   .task-title{
 
     display: flex;
     word-break: break-word;
     flex-wrap: wrap;
     margin-right: 10px;
+  }
+  .task-title__input{
+    outline: none;
+    margin: unset;
+    height: 10px;
+    width: 70%;
+    display: flex;
+    word-break: break-word;
   }
 
   .task-label{

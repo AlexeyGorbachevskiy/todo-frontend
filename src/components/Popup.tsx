@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import styled from "styled-components";
 import {COLORS} from "../constants/styles";
 import '../assets/styles/components/_popup.scss';
@@ -25,14 +25,21 @@ const Separator = styled.div`
   height: 1px;
   background-color: #262631;
 `;
-export const Popup = ({isOpen, className}: PopupProps) => {
+export const Popup = ({isOpen, className, items}: PopupProps) => {
     return (
-        <PopupWrapper className={className} isOpen={isOpen}>
-            <div className='todo-popup-btn'>Rename</div>
-            <Separator />
-            <div className='todo-popup-btn'>Move to</div>
-            <Separator />
-            <div className='todo-popup-btn'>Remove</div>
+        <PopupWrapper className={className} isOpen={isOpen} items={items}>
+            {
+                items!.map((item, index) =>
+                    (
+                        <Fragment key={index}>
+                            <div className='todo-popup-btn' onClick={item.handler}>{item.name}</div>
+                            {
+                                index!==items!.length-1 && <Separator/>
+                            }
+                        </Fragment>
+                    )
+                )
+            }
         </PopupWrapper>
     )
 }
@@ -41,8 +48,10 @@ export const Popup = ({isOpen, className}: PopupProps) => {
 type PopupProps = {
     className: string
     isOpen?: boolean
+    items?: Array<any>
 }
 
 type PopupWrapperPropsType = {
     isOpen?: boolean
+    items?: Array<any>
 }
