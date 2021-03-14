@@ -34,6 +34,7 @@ export function TodosPage() {
     const history = useHistory();
 
     const todos = useStore($todos);
+    console.log(todos)
     const newTodoName = useStore($newTodoName);
     const handleNewTodoNameChange = onNewTodoNameChange.prepend(getInputValue);
 

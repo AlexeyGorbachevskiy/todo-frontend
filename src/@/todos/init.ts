@@ -5,13 +5,21 @@ import {
     $token,
     clearAddNewTodoName, getAllTodos, onAddNewTask,
     onAddNewTodo,
-    onNewTodoNameChange, onRemoveTask, onRemoveTodo, setAuthError,
+    onNewTodoNameChange, onRemoveTask, onRemoveTodo, onRenameTask, onRenameTodo, setAuthError,
     setTodos,
     setToken
 } from "./model";
 import {setPayload} from "../../helpers/helpers";
 import {combine, sample} from "effector";
-import {addNewTaskFx, addNewTodoFx, getAllTodosFx, removeTaskFx, removeTodoFx} from "../../api/todo-api";
+import {
+    addNewTaskFx,
+    addNewTodoFx,
+    getAllTodosFx,
+    removeTaskFx,
+    removeTodoFx,
+    renameTaskFx,
+    renameTodoFx
+} from "../../api/todo-api";
 import {storageName} from "../../hooks/useAuth";
 
 
@@ -62,6 +70,22 @@ addNewTodoFx.fail.watch(() => {
 
 sample({
     source: $token,
+    clock: onRenameTodo,
+    fn:(token, clock)=>([token, clock]),
+    target: renameTodoFx,
+});
+
+renameTodoFx.done.watch((result) => {
+    if (result && result.result && result.result.allTodos.length) {
+        getAllTodos();
+    }
+});
+renameTodoFx.fail.watch((error) => {
+    console.log(error)
+});
+
+sample({
+    source: $token,
     clock: onRemoveTodo,
     fn:(token, todoId)=>([token, todoId]),
     target: removeTodoFx,
@@ -108,5 +132,22 @@ removeTaskFx.done.watch((result) => {
     }
 });
 removeTaskFx.fail.watch((error) => {
+    console.log(error)
+});
+
+
+sample({
+    source: $token,
+    clock: onRenameTask,
+    fn:(token, clock)=>([token, clock]),
+    target: renameTaskFx,
+});
+
+renameTaskFx.done.watch((result) => {
+    if (result && result.result && result.result.allTasks.length) {
+        getAllTodos();
+    }
+});
+renameTaskFx.fail.watch((error) => {
     console.log(error)
 });

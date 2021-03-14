@@ -20,6 +20,14 @@
       align-items: center;
       color: #FFFFFF;
     }
+    .todo-title__input{
+      outline: none;
+      margin: unset;
+      height: 10px;
+      width: 80%;
+      display: flex;
+      word-break: break-word;
+    }
 
     .menu-icon{
       cursor: pointer;

@@ -12,6 +12,7 @@ import logo from "../assets/images/logo.jpg";
 import left from "../assets/images/left.png";
 import right from "../assets/images/right.png";
 import styled from "styled-components";
+import {setAuthError} from "../@/todos/model";
 
 const Container = styled(NativeContainer)`
   display: flex;
@@ -47,8 +48,10 @@ export const AuthPage = () => {
     const loginHandler = async () => {
         try {
             const data = await request('/api/auth/login', 'POST', {...form})
+            setAuthError(null);
             auth.login(data.token, data.userId)
         } catch (e) {
+            setAuthError(e.error.message);
         }
     }
 

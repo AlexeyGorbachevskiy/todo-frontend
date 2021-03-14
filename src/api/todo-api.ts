@@ -37,6 +37,29 @@ export const addNewTodoFx = createEffect(
     }
 );
 
+export const renameTodoFx = createEffect(
+    async (data: any) => {
+        const [token, eventData] = data;
+        const {name, todoId} = eventData;
+        console.log(token, eventData)
+        let result = null;
+        try {
+            result = await request(
+                '/api/todos',
+                'PUT',
+                {
+                    name,
+                    todoId,
+                },
+                {Authorization: `Bearer ${token}`});
+            return result;
+        } catch (e) {
+            console.log(e)
+            throw e;
+        }
+    }
+);
+
 export const removeTodoFx = createEffect(
     async (data: any) => {
         const [token, todoId] = data;
@@ -91,6 +114,31 @@ export const removeTaskFx = createEffect(
                 {
                     todoId,
                     taskId:id
+                },
+                {Authorization: `Bearer ${token}`});
+            return result;
+        } catch (e) {
+            console.log(e)
+            throw e;
+        }
+    }
+);
+
+export const renameTaskFx = createEffect(
+    async (data: any) => {
+        const [token, eventData] = data;
+        const {name, todoId, taskId, isCompleted} = eventData;
+        console.log(token, eventData)
+        let result = null;
+        try {
+            result = await request(
+                '/api/tasks',
+                'PUT',
+                {
+                    name,
+                    todoId,
+                    taskId,
+                    isCompleted
                 },
                 {Authorization: `Bearer ${token}`});
             return result;

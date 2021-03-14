@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react'
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react'
 import styled from "styled-components";
 import {COLORS} from "../constants/styles";
 import '../assets/styles/components/_todo.scss';
@@ -6,8 +6,9 @@ import {Task} from "./Task";
 import {Radio} from "./Radio";
 import {v1} from "uuid";
 import {Popup} from "./Popup";
-import {onRemoveTodo} from "../@/todos/model";
-import {addNewTaskFx} from "../api/todo-api";
+import {onRemoveTodo, onRenameTodo} from "../@/todos/model";
+import {addNewTaskFx, renameTodoFx} from "../api/todo-api";
+import {Input} from "./Input";
 
 
 const TodoWrapper = styled.div`
@@ -27,8 +28,34 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     const progress = v1();
     const completed = v1();
 
+    const inputRef = useRef<any>();
+    const [input, setInput] = useState('');
+    const [renameTodoPending, setRenameTodoPending] = useState(false);
     const [isOpenPopup, setPopupOpen] = useState(false);
+    const [allowRenaming, setAllowRenaming] = useState(false);
     const [radio, setRadio] = useState<string>('All');
+    const [chosenTasks, setChosenTasks] = useState<any>([]);
+
+
+    useEffect(()=>{
+        switch(radio){
+            case 'All':{
+                setChosenTasks(tasks);
+                break;
+            }
+            case 'Progress':{
+                setChosenTasks(tasks.filter((task: any)=>!task.isCompleted));
+                break;
+            }
+            case 'Completed':{
+                setChosenTasks(tasks.filter((task: any)=>task.isCompleted));
+                break;
+            }
+
+        }
+    },[radio, tasks])
+
+
     const onRadioChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {value} = e.target;
         setRadio(value);
@@ -52,11 +79,28 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
         document.removeEventListener('click', outsideClickListener);
     }
 
-    const todoPopupItems = [{name: 'Add task', handler: onAddTask}, {name: 'Rename'}, {name: 'Move to'},
+    const renameTodo = () => {
+        setRenameTodoPending(true);
+    }
+
+    const cancelTodoAdding = () => {
+        if (renameTodoPending) {
+            setRenameTodoPending(false)
+        }
+    }
+
+    let todoPopupItems = [{name: 'Add task', handler: onAddTask}, {
+        name: 'Rename',
+        handler: renameTodo
+    }, {name: 'Move to'},
         {
             name: 'Remove',
             handler: onTodoRemove
         }];
+
+    if (renameTodoPending) {
+        todoPopupItems = [{name: 'Cancel', handler: cancelTodoAdding}, ...todoPopupItems]
+    }
 
     useEffect(() => {
         document.addEventListener('click', outsideClickListener);
@@ -80,9 +124,36 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
         }
     }
 
+    const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (renameTodoPending && e.target.value.trim()) {
+            setAllowRenaming(true)
+        }
+        setInput(e.target.value)
+    }
+
+    useEffect(() => {
+        if (renameTodoPending && todoName) {
+            setInput(todoName);
+        }
+    }, [renameTodoPending])
+
+    const onInputBlurEnter = () => {
+        if (renameTodoPending && !allowRenaming) {
+            inputRef.current.focus();
+        } else if (renameTodoPending && allowRenaming) {
+            onRenameTodo({name: input, todoId: id});
+        }
+    }
+
     addNewTaskFx.done.watch((result) => {
         if (result && result.result && result.result.allTasks.length) {
             setAddTaskPending(false);
+        }
+    });
+
+    renameTodoFx.done.watch((result) => {
+        if (result && result.result && result.result.allTodos.length) {
+            setRenameTodoPending(false);
         }
     });
 
@@ -92,10 +163,22 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
             <Popup className='popup' isOpen={isOpenPopup} items={todoPopupItems}/>
 
             <div className="todo-header">
-                <div className="todo-title">
-                    {todoName}
-                    {/*Tran Mau Tri Tam*/}
-                </div>
+                {
+                    renameTodoPending ?
+                        <Input autoFocus
+                               className="todo-title__input"
+                               type="text"
+                               value={input}
+                               onChange={onInputChange}
+                               onBlur={onInputBlurEnter}
+                               onEnter={onInputBlurEnter}
+                               inputRef={inputRef}
+                        /> :
+                        <div className="todo-title">
+                            {todoName}
+                            {/*Tran Mau Tri Tam*/}
+                        </div>
+                }
                 <div className="menu-icon" onClick={onOpenClosePopup}>
                     <div style={isOpenPopup ? {backgroundColor: '#fff'} : {}} className="todo-dot"/>
                     <div style={isOpenPopup ? {backgroundColor: '#fff'} : {}} className="todo-dot"/>
@@ -123,12 +206,12 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
             <div className="todo-main">
                 {
-                    isAddTaskPending && <Task isAddTaskPending todoId={id}/>
+                    isAddTaskPending && <Task isAddTaskPending todoId={id} setAddTaskPending={setAddTaskPending}/>
                 }
                 {
-                    tasks?.map((task) =>
+                    chosenTasks?.map((task: any) =>
                         (
-                            <Task key={task.id} id={task.id} todoId={id} name={task.name}/>
+                            <Task key={task.id} id={task.id} todoId={id} name={task.name} isCompleted={task.isCompleted}/>
                         )
                     )
                 }
@@ -142,7 +225,7 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
 type TodoProps = {
     todoName: string
-    tasks?: Array<any>
+    tasks?: any
     id: string
 }
 

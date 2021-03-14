@@ -15,5 +15,7 @@ export const setTodos = createEvent<Array<Object>>();
 export const onAddNewTodo = createEvent<MouseEvent<HTMLButtonElement>>();
 export const getAllTodos = createEvent();
 export const onRemoveTodo = createEvent<string>();
+export const onRenameTodo = createEvent<{}>();
 export const onAddNewTask = createEvent<{}>();
 export const onRemoveTask = createEvent<{}>();
+export const onRenameTask = createEvent<{}>();
