@@ -4,7 +4,7 @@ import {
     $todos,
     $token,
     clearAddNewTodoName, getAllTodos, onAddNewTask,
-    onAddNewTodo,
+    onAddNewTodo, onDragDropTask,
     onNewTodoNameChange, onRemoveTask, onRemoveTodo, onRenameTask, onRenameTodo, setAuthError,
     setTodos,
     setToken
@@ -13,7 +13,7 @@ import {setPayload} from "../../helpers/helpers";
 import {combine, sample} from "effector";
 import {
     addNewTaskFx,
-    addNewTodoFx,
+    addNewTodoFx, dragDropTaskFx,
     getAllTodosFx,
     removeTaskFx,
     removeTodoFx,
@@ -149,5 +149,21 @@ renameTaskFx.done.watch((result) => {
     }
 });
 renameTaskFx.fail.watch((error) => {
+    console.log(error)
+});
+
+sample({
+    source: $token,
+    clock: onDragDropTask,
+    fn:(token, clock)=>([token, clock]),
+    target: dragDropTaskFx,
+});
+
+dragDropTaskFx.done.watch((result) => {
+    if (result && result.result && result.result.allTodos.length) {
+        setTodos(result.result.allTodos.reverse().map((todo:any)=>({...todo,tasks: todo.tasks.reverse() })));
+    }
+});
+dragDropTaskFx.fail.watch((error) => {
     console.log(error)
 });

@@ -19,3 +19,4 @@ export const onRenameTodo = createEvent<{}>();
 export const onAddNewTask = createEvent<{}>();
 export const onRemoveTask = createEvent<{}>();
 export const onRenameTask = createEvent<{}>();
+export const onDragDropTask = createEvent<{}>();

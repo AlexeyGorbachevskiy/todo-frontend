@@ -113,7 +113,7 @@ export const removeTaskFx = createEffect(
                 'DELETE',
                 {
                     todoId,
-                    taskId:id
+                    taskId: id
                 },
                 {Authorization: `Bearer ${token}`});
             return result;
@@ -138,6 +138,42 @@ export const renameTaskFx = createEffect(
                     name,
                     todoId,
                     taskId,
+                    isCompleted
+                },
+                {Authorization: `Bearer ${token}`});
+            return result;
+        } catch (e) {
+            console.log(e)
+            throw e;
+        }
+    }
+);
+
+export const dragDropTaskFx = createEffect(
+    async (data: any) => {
+        const [token, eventData] = data;
+        const {
+            currentTodoId,
+            targetTodoId,
+            currentTaskId,
+            targetTaskIndex,
+            name,
+            description,
+            isCompleted
+        } = eventData;
+        console.log(token, eventData)
+        let result = null;
+        try {
+            result = await request(
+                '/api/drag&Drop',
+                'PUT',
+                {
+                    currentTodoId,
+                    targetTodoId,
+                    currentTaskId,
+                    targetTaskIndex,
+                    name,
+                    description,
                     isCompleted
                 },
                 {Authorization: `Bearer ${token}`});
