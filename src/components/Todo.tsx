@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from 'react'
+import React, {ChangeEvent, DragEvent, useEffect, useRef, useState} from 'react'
 import styled from "styled-components";
 import {COLORS} from "../constants/styles";
 import '../assets/styles/components/_todo.scss';
@@ -6,7 +6,7 @@ import {Task} from "./Task";
 import {Radio} from "./Radio";
 import {v1} from "uuid";
 import {Popup} from "./Popup";
-import {onRemoveTodo, onRenameTodo} from "../@/todos/model";
+import {$todos, onDragDropTask, onRemoveTodo, onRenameTodo} from "../@/todos/model";
 import {addNewTaskFx, renameTodoFx} from "../api/todo-api";
 import {Input} from "./Input";
 
@@ -37,23 +37,23 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     const [chosenTasks, setChosenTasks] = useState<any>([]);
 
 
-    useEffect(()=>{
-        switch(radio){
-            case 'All':{
+    useEffect(() => {
+        switch (radio) {
+            case 'All': {
                 setChosenTasks(tasks);
                 break;
             }
-            case 'Progress':{
-                setChosenTasks(tasks.filter((task: any)=>!task.isCompleted));
+            case 'Progress': {
+                setChosenTasks(tasks.filter((task: any) => !task.isCompleted));
                 break;
             }
-            case 'Completed':{
-                setChosenTasks(tasks.filter((task: any)=>task.isCompleted));
+            case 'Completed': {
+                setChosenTasks(tasks.filter((task: any) => task.isCompleted));
                 break;
             }
 
         }
-    },[radio, tasks])
+    }, [radio, tasks])
 
 
     const onRadioChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -157,8 +157,52 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
         }
     });
 
+    const [isShowTaskShadow, setShowTaskShadow] = useState(false);
+
+    const dragEnterHandler = (e: DragEvent<HTMLDivElement>) => {
+        if (tasks.length) return;
+        console.log('todo enter')
+        setShowTaskShadow(true)
+    }
+    const dragOverHandler = (e: DragEvent<HTMLDivElement>) => {
+        if (tasks.length) return;
+        e.preventDefault();
+    }
+    const dragLeaveHandler = (e: DragEvent<HTMLDivElement>) => {
+        if (tasks.length) return;
+        setShowTaskShadow(false)
+    }
+    const dropHandler = (e: DragEvent<HTMLDivElement>) => {
+        if (tasks.length) return;
+        console.log('todo drop')
+        e.preventDefault();
+        setShowTaskShadow(false);
+        const currentTodoId = e.dataTransfer.getData('currentTodoId');
+        const currentTaskId = e.dataTransfer.getData('currentTaskId');
+
+        const todos = $todos.getState();
+        let currentTodoIndex = todos.findIndex(el => el.id === currentTodoId);
+        const currentTask = todos[currentTodoIndex].tasks.find((el: any) => el.id === currentTaskId);
+
+        onDragDropTask({
+            currentTodoId,
+            targetTodoId: id,
+            currentTaskId,
+            targetTaskIndex: 0,
+            name: currentTask.name,
+            description: currentTask.description,
+            isCompleted: currentTask.isCompleted
+        })
+    }
+
+
     return (
-        <TodoWrapper className="todo">
+        <TodoWrapper
+            className="todo"
+            onDragEnter={dragEnterHandler}
+            onDragOver={dragOverHandler}
+            onDrop={dropHandler}
+        >
 
             <Popup className='popup' isOpen={isOpenPopup} items={todoPopupItems}/>
 
@@ -209,9 +253,21 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
                     isAddTaskPending && <Task isAddTaskPending todoId={id} setAddTaskPending={setAddTaskPending}/>
                 }
                 {
+                    isShowTaskShadow && !tasks.length &&
+                    <div
+                        className='task-shadow'
+                        // onDragOver={(e) => dragOverHandler(e)}
+                        // onDragEnter={dragEnterTaskHandler}
+                        onDragLeave={dragLeaveHandler}
+                        // onDrop={(e) => dropHandler(e, todoId, id)}
+                    />
+                }
+                {
                     chosenTasks?.map((task: any) =>
                         (
-                            <Task key={task.id} id={task.id} todoId={id} name={task.name} isCompleted={task.isCompleted}/>
+                            <Task key={task.id} id={task.id} todoId={id} name={task.name}
+                                  isCompleted={task.isCompleted}
+                            />
                         )
                     )
                 }

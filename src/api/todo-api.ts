@@ -161,7 +161,6 @@ export const dragDropTaskFx = createEffect(
             description,
             isCompleted
         } = eventData;
-        console.log(token, eventData)
         let result = null;
         try {
             result = await request(

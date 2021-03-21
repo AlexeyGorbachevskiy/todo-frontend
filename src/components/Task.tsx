@@ -8,7 +8,7 @@ import {$todos, onAddNewTask, onDragDropTask, onRemoveTask, onRenameTask} from "
 import {renameTaskFx} from "../api/todo-api";
 
 const TaskWrapper = styled.div`
-  width: 200;
+  // width: 200;
   min-height: 20px;
   border-radius: 15px;
   background-color: ${({backgroundColor}: TaskWrapperProps) => backgroundColor || COLORS.aqua};
@@ -122,7 +122,14 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
         setCheckbox(e.target.checked)
     }
 
+
     const dragStartHandler = (e: DragEvent<HTMLDivElement>, todoId: string | undefined | null, id: string | undefined | null) => {
+        const target = e.target as HTMLDivElement;
+
+        setTimeout(function () {
+            target.style.display = 'none';
+        }, 0);
+
         if (todoId) {
             e.dataTransfer.setData('currentTodoId', todoId);
         }
@@ -133,22 +140,29 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
 
     const dragOverHandler = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+    }
+    const dragTaskOverHandler = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
         const target = e.target as HTMLDivElement;
+        if (e.currentTarget === target) return
+        setShowShadow(true);
+    }
 
-        if (e.currentTarget.contains(target)) {
-            e.currentTarget.style.boxShadow = '0 4px 3px green'
-        }
+    const dragEnterHandler = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        // const target = e.target as HTMLDivElement;
+        // if (e.currentTarget === target) return
+        // setShowShadow(true);
+
     }
 
     const dragLeaveHandler = (e: DragEvent<HTMLDivElement>) => {
-        const target = e.target as HTMLDivElement;
-        target.style.boxShadow = 'none'
+        setShowShadow(false);
     }
 
     const dropHandler = (e: DragEvent<HTMLDivElement>, targetTodoId: string | null | undefined, targetTaskId: string | null | undefined) => {
         e.preventDefault();
-        e.currentTarget.style.boxShadow = 'none';
-
+        setShowShadow(false);
         const currentTodoId = e.dataTransfer.getData('currentTodoId');
         const currentTaskId = e.dataTransfer.getData('currentTaskId');
 
@@ -160,13 +174,21 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
 
         const currentTask = todos[currentTodoIndex].tasks.find((el: any) => el.id === currentTaskId);
 
+
         // all arrays are reversed now, need to get actual ids
-        // (function reverseIds() {
-        //     targetTaskIndex = todos[targetTodoIndex].tasks.length - 1 - targetTaskIndex;
-        // }())
+        ;(function reverseIds() {
+            targetTaskIndex = todos[targetTodoIndex].tasks.length - 1 - targetTaskIndex;
+            currentTaskIndex = todos[currentTodoIndex].tasks.length - 1 - currentTaskIndex;
+        }())
 
+        if (currentTodoId === targetTodoId) {
+            if (currentTaskIndex < targetTaskIndex) {
+                targetTaskIndex -= 1
+            }
+        }
 
-        console.log(currentTaskId)
+        targetTaskIndex += 1;
+
         onDragDropTask({
             currentTodoId,
             targetTodoId,
@@ -180,49 +202,63 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
 
     const dragEndHandler = (e: DragEvent<HTMLDivElement>) => {
         const target = e.target as HTMLDivElement;
-        target.style.boxShadow = 'none';
+        if (e.dataTransfer.dropEffect === 'none') {
+            target.style.display = 'flex';
+        }
 
+        setShowShadow(false);
     }
 
+    const [isShowShadow, setShowShadow] = useState(false);
 
     return (
-        <TaskWrapper
-            style={checkbox ? {backgroundColor: 'rgba(35,91,89, 0.5)'} : {}}
-            className="task"
-            draggable={true}
-            onDragStart={(e) => dragStartHandler(e, todoId, id)}
-            onDragOver={(e) => dragOverHandler(e)}
-            onDragLeave={dragLeaveHandler}
-            onDrop={(e) => dropHandler(e, todoId, id)}
-            onDragEnd={(e) => dragEndHandler(e)}
-        >
+        <>
+            {
+                <div
+                    style={isShowShadow ? {display: 'flex'} : {display: 'none'}}
+                    className='task-shadow'
+                    onDragOver={(e) => dragOverHandler(e)}
+                    onDragLeave={dragLeaveHandler}
+                    onDrop={(e) => dropHandler(e, todoId, id)}
+                />
+            }
+            <TaskWrapper
+                style={checkbox ? {backgroundColor: 'rgba(35,91,89, 0.5)'} : {}}
+                className="task"
+                draggable={true}
+                onDragStart={(e) => dragStartHandler(e, todoId, id)}
+                onDragEnter={dragEnterHandler}
+                onDragOver={(e) => dragTaskOverHandler(e)}
+                onDragEnd={(e) => dragEndHandler(e)}
+            >
 
-            <Popup className='popup' isOpen={isOpenPopup} items={taskPopupItems}/>
-            <div className='task-body' style={checkbox ? {textDecoration: 'line-through', color: 'red'} : {}}>
-                {isAddTaskPending || renameTaskPending ?
-                    <Input autoFocus
-                           className="task-title__input"
-                           type="text"
-                           value={input}
-                           onChange={onInputChange}
-                           onBlur={onInputBlurEnter}
-                           onEnter={onInputBlurEnter}
-                           inputRef={inputRef}
-                    />
-                    :
-                    <div className="task-title">
-                        {name}
-                    </div>
-                }
-                <input checked={checkbox} onChange={onCheckboxChange} className='checkbox' type="checkbox"/>
-            </div>
-            <div className="task-label" onClick={onOpenClosePopup}>
-                <div className="task-dot"/>
-                <div className="task-dot"/>
-                <div className="task-dot"/>
-            </div>
+                <Popup className='popup' isOpen={isOpenPopup} items={taskPopupItems}/>
+                <div className='task-body' style={checkbox ? {textDecoration: 'line-through', color: 'red'} : {}}>
+                    {isAddTaskPending || renameTaskPending ?
+                        <Input autoFocus
+                               className="task-title__input"
+                               type="text"
+                               value={input}
+                               onChange={onInputChange}
+                               onBlur={onInputBlurEnter}
+                               onEnter={onInputBlurEnter}
+                               inputRef={inputRef}
+                        />
+                        :
+                        <div className="task-title">
+                            {name}
+                        </div>
+                    }
+                    <input checked={checkbox} onChange={onCheckboxChange} className='checkbox' type="checkbox"/>
+                </div>
+                <div className="task-label" onClick={onOpenClosePopup}>
+                    <div className="task-dot"/>
+                    <div className="task-dot"/>
+                    <div className="task-dot"/>
+                </div>
 
-        </TaskWrapper>
+            </TaskWrapper>
+        </>
     )
 }
 
