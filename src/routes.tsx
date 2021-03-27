@@ -7,20 +7,20 @@ export const useRoutes = (isAuthenticated: boolean) => {
     if (isAuthenticated) {
         return (
             <Switch>
-                <Route path="/todos" exact>
+                <Route path="todo-frontend/todos" exact>
                     <TodosPage/>
                 </Route>
-                <Redirect to="/todos" />
+                <Redirect to="todo-frontend/todos" />
             </Switch>
         )
     }
 
     return (
         <Switch>
-            <Route path="/auth" exact>
+            <Route path="todo-frontend/auth" exact>
                 <AuthPage/>
             </Route>
-            <Redirect to="/auth" />
+            <Redirect to="todo-frontend/auth" />
         </Switch>
     )
 }
