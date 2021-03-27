@@ -6,16 +6,24 @@ import {Task} from "./Task";
 import {Radio} from "./Radio";
 import {v1} from "uuid";
 import {Popup} from "./Popup";
-import {$todos, onDragDropTask, onRemoveTodo, onRenameTodo} from "../@/todos/model";
+import {
+    $isLoaderVisible,
+    $isRequestPending,
+    $todos,
+    onDragDropTask,
+    onRemoveTodo,
+    onRenameTodo
+} from "../@/todos/model";
 import {addNewTaskFx, renameTodoFx} from "../api/todo-api";
 import {Input} from "./Input";
+import {useStore} from "effector-react";
 
 
 const TodoWrapper = styled.div`
   position: relative;
   
   width: 280px;
-  min-height: 50px;
+  // min-height: 50px;
   border-radius: 15px;
   background-color: ${({backgroundColor}: TodoWrapperProps) => backgroundColor || COLORS.base};
 `;
@@ -35,6 +43,8 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     const [allowRenaming, setAllowRenaming] = useState(false);
     const [radio, setRadio] = useState<string>('All');
     const [chosenTasks, setChosenTasks] = useState<any>([]);
+    const isLoaderVisible = useStore($isLoaderVisible);
+    const isRequestPending = useStore($isRequestPending);
 
 
     useEffect(() => {
@@ -61,7 +71,6 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
         setRadio(value);
     }
     const onOpenClosePopup = () => {
-        console.log(isOpenPopup)
         setPopupOpen(!isOpenPopup);
         document.removeEventListener('click', outsideClickListener);
     }
@@ -92,14 +101,14 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     let todoPopupItems = [{name: 'Add task', handler: onAddTask}, {
         name: 'Rename',
         handler: renameTodo
-    }, {name: 'Move to'},
+    },
         {
             name: 'Remove',
             handler: onTodoRemove
         }];
 
     if (renameTodoPending) {
-        todoPopupItems = [{name: 'Cancel', handler: cancelTodoAdding}, ...todoPopupItems]
+        todoPopupItems = [{name: 'Cancel', handler: cancelTodoAdding}]
     }
 
     useEffect(() => {
@@ -161,7 +170,6 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
     const dragEnterHandler = (e: DragEvent<HTMLDivElement>) => {
         if (tasks.length) return;
-        console.log('todo enter')
         setShowTaskShadow(true)
     }
     const dragOverHandler = (e: DragEvent<HTMLDivElement>) => {
@@ -174,7 +182,6 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     }
     const dropHandler = (e: DragEvent<HTMLDivElement>) => {
         if (tasks.length) return;
-        console.log('todo drop')
         e.preventDefault();
         setShowTaskShadow(false);
         const currentTodoId = e.dataTransfer.getData('currentTodoId');
@@ -204,7 +211,7 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
             onDrop={dropHandler}
         >
 
-            <Popup className='popup' isOpen={isOpenPopup} items={todoPopupItems}/>
+            <Popup className='popup' isOpen={isOpenPopup} items={todoPopupItems} renameTodoPending={renameTodoPending}/>
 
             <div className="todo-header">
                 {
@@ -250,6 +257,13 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
             <div className="todo-main">
                 {
+                    !isRequestPending && !isLoaderVisible && !tasks.length &&
+                    <div className="no-tasks">
+                        No tasks added
+                    </div>
+                }
+
+                {
                     isAddTaskPending && <Task isAddTaskPending todoId={id} setAddTaskPending={setAddTaskPending}/>
                 }
                 {
@@ -271,7 +285,6 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
                         )
                     )
                 }
-                {/*No tasks added*/}
             </div>
 
         </TodoWrapper>

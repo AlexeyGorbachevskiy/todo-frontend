@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
-import {useMessage} from "../hooks/useMessage";
+import React, {useContext, useState} from 'react'
 import {useFetch} from "../hooks/useFetch";
 import {AuthContext} from "../context/AuthContext";
 import {Input} from "../components/Input";
@@ -12,7 +11,9 @@ import logo from "../assets/images/logo.jpg";
 import left from "../assets/images/left.png";
 import right from "../assets/images/right.png";
 import styled from "styled-components";
-import {setAuthError} from "../@/todos/model";
+import {$authError, $authMessage, setAuthError, setAuthMessage} from "../@/todos/model";
+import {useStore} from "effector-react";
+import {Loader} from "../components/Loader";
 
 const Container = styled(NativeContainer)`
   display: flex;
@@ -22,36 +23,76 @@ const Container = styled(NativeContainer)`
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext);
-    const message = useMessage();
-    const {loading, request, error, clearError} = useFetch();
+    const {loading, request} = useFetch();
     const [form, setForm] = useState({
         email: '', password: ''
-    })
+    });
+    const authMessage = useStore($authMessage);
+    const authError = useStore($authError);
+    const [isEmailError, setEmailError] = useState(false);
+    const [isPasswordError, setPasswordError] = useState(false);
 
-    useEffect(() => {
-        message(error)
-        clearError()
-    }, [error, message, clearError]);
 
     const changeHandler = (event: any) => {
+        setAuthError(null);
+        setAuthMessage(null);
+        if (event.target.name === 'email') {
+            setEmailError(!event.target.value.trim().length)
+        }
+        if (event.target.name === 'password') {
+            setPasswordError(!event.target.value.trim().length)
+        }
+
         setForm({...form, [event.target.name]: event.target.value})
+    }
+
+    const checkForEmpty = () => {
+        if (!form.email.trim().length && !form.password.trim().length) {
+            setEmailError(true);
+            setPasswordError(true);
+            return true;
+        }
+        if (!form.email.trim().length) {
+            setEmailError(true);
+            return true;
+        }
+        if (!form.password.trim().length) {
+            setPasswordError(true);
+            return true;
+        }
+        return false;
     }
 
     const registerHandler = async () => {
         try {
+            setEmailError(false);
+            setPasswordError(false);
+            setAuthError(null);
+            setAuthMessage(null);
+            if (checkForEmpty()) {
+                return;
+            }
+
             const data = await request('/api/auth/register', 'POST', {...form})
-            message(data.message)
+            setAuthMessage(data.message);
         } catch (e) {
+            setAuthError(e.message);
         }
     }
 
     const loginHandler = async () => {
         try {
-            const data = await request('/api/auth/login', 'POST', {...form})
+            setEmailError(false);
+            setPasswordError(false);
             setAuthError(null);
+            setAuthMessage(null);
+            if (checkForEmpty()) {
+                return;
+            }
+            const data = await request('/api/auth/login', 'POST', {...form})
             auth.login(data.token, data.userId)
         } catch (e) {
-            setAuthError(e.error.message);
+            setAuthError(e.message);
         }
     }
 
@@ -62,7 +103,7 @@ export const AuthPage = () => {
                     ToDo App
                     <img className="logo" src={logo} alt="Logo"/>
                 </div>
-                <div className="login-form">
+                <div className="login-form" style={loading ? {opacity: 0.5} : {}}>
                     <h1 className="login-header">Sign In to App</h1>
                     <div className="inputs-wrapper">
 
@@ -74,7 +115,14 @@ export const AuthPage = () => {
                             className="input"
                             value={form.email}
                             onChange={changeHandler}
+                            style={isEmailError ? {borderColor: 'red'} : {}}
                         />
+                        {
+                            isEmailError &&
+                            <span className="input-error">
+                                Email field is required
+                            </span>
+                        }
 
                         <Input
                             placeholder="Type password"
@@ -84,14 +132,34 @@ export const AuthPage = () => {
                             className="input"
                             value={form.password}
                             onChange={changeHandler}
+                            style={isPasswordError ? {borderColor: 'red'} : {}}
                         />
+                        {
+                            isPasswordError &&
+                            <span className="input-error">
+                            Password field is required
+                        </span>
+                        }
+
+                        {
+                            authMessage &&
+                            <div className="message-container">
+                                {authMessage}
+                            </div>
+                        }
+                        {
+                            authError &&
+                            <div className="error-container">
+                                {authError}
+                            </div>
+                        }
+
 
                     </div>
                     <div className="buttons-wrapper">
                         <Button
                             className="button"
-                            style={{marginRight: 10}}
-                            disabled={loading}
+                            disabled={loading || isEmailError || isPasswordError}
                             onClick={loginHandler}
                         >
                             Sign In
@@ -99,7 +167,7 @@ export const AuthPage = () => {
                         <Button
                             className="button"
                             onClick={registerHandler}
-                            disabled={loading}
+                            disabled={loading || isEmailError || isPasswordError}
                         >
                             Sign Up
                         </Button>
@@ -109,7 +177,10 @@ export const AuthPage = () => {
                 <img className="right" src={right} alt="Right image"/>
             </div>
 
-
+            {
+                loading &&
+                <Loader style={{position: 'absolute'}}/>
+            }
         </Container>
     )
 }

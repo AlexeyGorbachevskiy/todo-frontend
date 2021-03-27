@@ -54,6 +54,20 @@
         display: flex;
         flex-direction: column;
         width: 100%;
+
+        .input-error{
+          color: red;
+          margin-bottom: 20px;
+        }
+
+        .message-container{
+          margin: 0 auto;
+          color: green;
+        }
+        .error-container{
+          margin: 0 auto;
+          color: red;
+        }
       }
 
       .buttons-wrapper{

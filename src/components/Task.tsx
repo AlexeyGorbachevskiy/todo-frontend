@@ -4,11 +4,12 @@ import {COLORS} from "../constants/styles";
 import '../assets/styles/components/_task.scss';
 import {Popup} from "./Popup";
 import {Input} from "./Input";
-import {$todos, onAddNewTask, onDragDropTask, onRemoveTask, onRenameTask} from "../@/todos/model";
+import {$isRequestPending, $todos, onAddNewTask, onDragDropTask, onRemoveTask, onRenameTask} from "../@/todos/model";
 import {renameTaskFx} from "../api/todo-api";
+import {useStore} from "effector-react";
 
 const TaskWrapper = styled.div`
-  // width: 200;
+  cursor: ${({isRequestPending}: TaskWrapperProps) => isRequestPending ? 'initial' : 'pointer'};
   min-height: 20px;
   border-radius: 15px;
   background-color: ${({backgroundColor}: TaskWrapperProps) => backgroundColor || COLORS.aqua};
@@ -59,12 +60,12 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
     const renameTask = () => {
         setRenameTaskPending(true);
     }
-    let taskPopupItems = [{name: 'Rename', handler: renameTask}, {name: 'Move to'}, {
+    let taskPopupItems = [{name: 'Rename', handler: renameTask}, {
         name: 'Remove',
         handler: removeTask
     }];
     if (!id || renameTaskPending) {
-        taskPopupItems = [{name: 'Cancel', handler: cancelTaskAdding}, ...taskPopupItems]
+        taskPopupItems = [{name: 'Cancel', handler: cancelTaskAdding}]
     }
 
 
@@ -143,16 +144,16 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
     }
     const dragTaskOverHandler = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        const target = e.target as HTMLDivElement;
-        if (e.currentTarget === target) return
-        setShowShadow(true);
+        // const target = e.target as HTMLDivElement;
+        // if (e.currentTarget === target) return
+        // setShowShadow(true);
     }
 
     const dragEnterHandler = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        // const target = e.target as HTMLDivElement;
-        // if (e.currentTarget === target) return
-        // setShowShadow(true);
+        const target = e.target as HTMLDivElement;
+        if (e.currentTarget === target) return
+        setShowShadow(true);
 
     }
 
@@ -208,7 +209,7 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
 
         setShowShadow(false);
     }
-
+    const isRequestPending = useStore($isRequestPending);
     const [isShowShadow, setShowShadow] = useState(false);
 
     return (
@@ -225,15 +226,22 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
             <TaskWrapper
                 style={checkbox ? {backgroundColor: 'rgba(35,91,89, 0.5)'} : {}}
                 className="task"
-                draggable={true}
+                draggable={!isRequestPending}
                 onDragStart={(e) => dragStartHandler(e, todoId, id)}
                 onDragEnter={dragEnterHandler}
                 onDragOver={(e) => dragTaskOverHandler(e)}
                 onDragEnd={(e) => dragEndHandler(e)}
+                isRequestPending={isRequestPending}
             >
 
-                <Popup className='popup' isOpen={isOpenPopup} items={taskPopupItems}/>
-                <div className='task-body' style={checkbox ? {textDecoration: 'line-through', color: 'red'} : {}}>
+                <Popup className='popup'
+                       isOpen={isOpenPopup}
+                       items={taskPopupItems}
+                       renameTaskPending={renameTaskPending}
+                       isAddTaskPending={isAddTaskPending}
+                       customOffset={'35px'}
+                />
+                <div className='task-body'>
                     {isAddTaskPending || renameTaskPending ?
                         <Input autoFocus
                                className="task-title__input"
@@ -245,7 +253,8 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
                                inputRef={inputRef}
                         />
                         :
-                        <div className="task-title">
+                        <div className="task-title"
+                             style={checkbox ? {textDecoration: 'line-through', color: 'red'} : {}}>
                             {name}
                         </div>
                     }
@@ -275,4 +284,5 @@ type TaskProps = {
 type TaskWrapperProps = {
     backgroundColor?: string;
     className?: string;
+    isRequestPending?: boolean
 }

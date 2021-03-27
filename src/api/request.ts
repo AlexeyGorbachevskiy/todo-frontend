@@ -8,7 +8,7 @@ export const request = async (url: string, method = 'GET', body = null as any, h
             headers['Content-Type'] = 'application/json';
         }
 
-        const response = await fetch(url, {method, body, headers});
+        const response = await fetch(`https://todo-backend-node-js.herokuapp.com${url}`, {method, body, headers});
         const data = await response.json();
 
         if (!response.ok) {

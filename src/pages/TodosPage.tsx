@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {MouseEvent, useContext, useEffect} from 'react';
 import {AuthContext} from "../context/AuthContext";
 import {Container as NativeContainer} from "../components/Container";
 import {COLORS} from "../constants/styles";
@@ -15,11 +15,22 @@ import {Todo} from "../components/Todo";
 import {Input} from "../components/Input";
 import '../assets/styles/components/_input.scss';
 import {getInputValue} from "../helpers/helpers";
-import {$newTodoName, $todos, getAllTodos, onAddNewTodo, onNewTodoNameChange, setToken} from "../@/todos/model";
+import {
+    $isLoaderVisible,
+    $isRequestPending,
+    $newTodoName,
+    $todos,
+    getAllTodos,
+    onAddNewTodo,
+    onNewTodoNameChange,
+    setToken
+} from "../@/todos/model";
 import {useStore} from "effector-react";
 import '../@/todos/init';
 import styled from "styled-components";
-
+import {Loader} from "../components/Loader";
+import {Linear} from "../components/Linear";
+import {Button as NativeButton} from "../components/Button";
 
 const Container = styled(NativeContainer)`
   color: #ffffff;
@@ -27,18 +38,29 @@ const Container = styled(NativeContainer)`
   height: unset;
   min-height: calc(100vh - 120px);
 `;
+const Button = styled(NativeButton)`
+    width: 140px;  
+    height: 40px;
+    background: #2b2bc6;
+    border-radius: 5px;
+    
+    ${({disabled}) => !disabled &&
+    `&:hover{
+    opacity: 0.7;
+    }`
+}
+`;
 
 export function TodosPage() {
-
     const auth = useContext(AuthContext);
     const history = useHistory();
-
+    const isLoaderVisible = useStore($isLoaderVisible);
+    const isRequestPending = useStore($isRequestPending);
     const todos = useStore($todos);
-    console.log(todos)
     const newTodoName = useStore($newTodoName);
     const handleNewTodoNameChange = onNewTodoNameChange.prepend(getInputValue);
 
-    if(auth && auth.token){
+    if (auth && auth.token) {
         setToken(auth.token)
     }
 
@@ -53,6 +75,11 @@ export function TodosPage() {
         history.push('/');
     }
 
+    const addNewTodo = (e: MouseEvent<HTMLButtonElement>) => {
+        if(newTodoName.trim().length){
+            onAddNewTodo(e)
+        }
+    }
 
     return (
         <Container className="container" backgroundColor={COLORS.darkMain}>
@@ -72,19 +99,24 @@ export function TodosPage() {
                         <a className="logout-link" href="/" onClick={logoutHandler}>Logout</a>
                     </div>
                 </Header>
+                {
+                    isRequestPending &&
+                    <Linear/>
+                }
 
                 <div className="todos-wrapper">
                     <div className="todos-creator">
-                        <div className="todos-creator__label">Todo List</div>
+                        {/*<div className="todos-creator__label">Cards</div>*/}
                         <div className="todos-creator__create">
                             <Input className="input" value={newTodoName} onChange={handleNewTodoNameChange}/>
-                            <button className="todos-creator__label" onClick={onAddNewTodo}>+ Create Todo</button>
+                            <Button disabled={isRequestPending || isLoaderVisible} className="todos-creator__label"
+                                    onClick={addNewTodo}>+ Create Todo</Button>
                         </div>
                     </div>
 
                     <div className="todos">
                         {
-                            todos.map((todo)=>{
+                            todos.map((todo) => {
                                 return (
                                     <Todo key={todo.id} id={todo.id} tasks={todo.tasks} todoName={todo.name}/>
                                 )
@@ -109,6 +141,16 @@ export function TodosPage() {
                 </Header>
             </div>
 
+            {
+                isLoaderVisible &&
+                <Loader/>
+            }
+            {
+                !isLoaderVisible && !todos.length &&
+                    <div className="no-todos">
+                        You don't have any todos now.
+                    </div>
+            }
         </Container>
     );
 }

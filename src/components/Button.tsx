@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import {COLORS} from "../constants/styles";
 
 const CustomButton = styled.button`
+   cursor: ${({disabled}) => disabled ? 'not-allowed' : 'pointer'};
+   opacity: ${({disabled}) => disabled ? '0.1' : 'none'};
    width: 40%;
    height: 35px;
    margin: 0 1.2em;
-   background-color: ${()=>COLORS.green};
+   background-color: ${() => COLORS.green};
    border: 0px;
    color: #fff;
    border-radius: 3px;
@@ -17,6 +19,7 @@ const CustomButton = styled.button`
    
   &:hover {
     opacity: 0.9;
+    opacity: ${({disabled}) => disabled ? '0.1' : '0.9'};
   }
 `;
 
@@ -29,6 +32,8 @@ export const Button =
          className,
          value,
          onClick,
+         style,
+         disabled,
          children
      }: InputPropsType) => {
         return (
@@ -40,9 +45,11 @@ export const Button =
                 className={className}
                 value={value}
                 onClick={onClick}
+                style={style}
+                disabled={disabled}
             >{children}</CustomButton>
         )
     }
 
 export type InputPropsType = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
-    & { };
+    & {};

@@ -70,4 +70,25 @@
 
   }
 
+  .todo-main{
+    padding-right: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 250px;
+  }
+
+
+}
+
+.todo-shadow {
+  width: 280px;
+  min-height: 250px;
+  display: flex;
+  padding: 10px 15px;
+  background-color: grey;
+  border-radius: 5px;
+
+  .shadow-content {
+    visibility: hidden;
+  }
 }

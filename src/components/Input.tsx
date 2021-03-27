@@ -9,14 +9,14 @@ const CustomInput = styled.input`
    padding: .5em;
    margin: 0 0 1.2em;
    background-color: ${({}: InputPropsType) => COLORS.lightGrey};
-   border: 2px solid ${() => COLORS.grey};
+   border: 2px solid ${({isEmpty}: InputPropsType) => isEmpty ? 'red' : COLORS.grey};
    font-size: 14px;
    border-radius: 3px;
    transition: background-color .2s ease-in-out 0s, border-color .2s ease-in-out 0s;
  
   &:focus {
     background-color: ${() => COLORS.white};
-    border-color: ${() => COLORS.blue};
+    border-color: ${({}: InputPropsType) => COLORS.blue};
   }
 `;
 
@@ -32,7 +32,8 @@ export const Input =
          autoFocus,
          onBlur,
          onEnter,
-         inputRef
+         inputRef,
+         style,
      }: InputPropsType) => {
 
         const onEnterPress = (e: any) => {
@@ -54,9 +55,10 @@ export const Input =
                 onBlur={onBlur}
                 onKeyPress={onEnterPress}
                 ref={inputRef}
+                style={style}
             />
         )
     }
 
 export type InputPropsType = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-    & { onEnter?: () => void, error?: string, inputRef?: any };
+    & { onEnter?: () => void, error?: string, inputRef?: any, isEmpty?: any, style? :any };

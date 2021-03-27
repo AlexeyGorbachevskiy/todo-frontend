@@ -13,7 +13,6 @@ export const getAllTodosFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -31,7 +30,6 @@ export const addNewTodoFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -41,7 +39,6 @@ export const renameTodoFx = createEffect(
     async (data: any) => {
         const [token, eventData] = data;
         const {name, todoId} = eventData;
-        console.log(token, eventData)
         let result = null;
         try {
             result = await request(
@@ -54,7 +51,6 @@ export const renameTodoFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -72,7 +68,6 @@ export const removeTodoFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -82,7 +77,6 @@ export const addNewTaskFx = createEffect(
     async (data: any) => {
         const [token, eventData] = data;
         const {name, todoId} = eventData;
-        console.log(token, eventData)
         let result = null;
         try {
             result = await request(
@@ -95,7 +89,6 @@ export const addNewTaskFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -105,7 +98,6 @@ export const removeTaskFx = createEffect(
     async (data: any) => {
         const [token, eventData] = data;
         const {todoId, id} = eventData;
-        console.log(token, eventData)
         let result = null;
         try {
             result = await request(
@@ -118,7 +110,6 @@ export const removeTaskFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -128,7 +119,6 @@ export const renameTaskFx = createEffect(
     async (data: any) => {
         const [token, eventData] = data;
         const {name, todoId, taskId, isCompleted} = eventData;
-        console.log(token, eventData)
         let result = null;
         try {
             result = await request(
@@ -143,7 +133,6 @@ export const renameTaskFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
@@ -178,7 +167,6 @@ export const dragDropTaskFx = createEffect(
                 {Authorization: `Bearer ${token}`});
             return result;
         } catch (e) {
-            console.log(e)
             throw e;
         }
     }
