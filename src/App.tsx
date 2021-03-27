@@ -1,5 +1,5 @@
 import React from 'react'
-import {HashRouter as Router} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 import {useRoutes} from './routes'
 import {AuthContext} from './context/AuthContext'
 import {useAuth} from "./hooks/useAuth";
