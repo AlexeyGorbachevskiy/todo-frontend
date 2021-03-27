@@ -257,7 +257,7 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
             <div className="todo-main">
                 {
-                    !isRequestPending && !isLoaderVisible && !tasks.length &&
+                    !tasks.length &&
                     <div className="no-tasks">
                         No tasks added
                     </div>
