@@ -1,6 +1,6 @@
 import {createContext} from 'react'
 
-type loginType = (x: string, y: number) => void;
+type loginType = (x: string, y: number, z: string) => void;
 function noop() {}
 
 export const AuthContext = createContext({
@@ -8,5 +8,6 @@ export const AuthContext = createContext({
     userId: null,
     login: noop as loginType,
     logout: noop,
-    isAuthenticated: false
+    isAuthenticated: false,
+    email: null,
 })

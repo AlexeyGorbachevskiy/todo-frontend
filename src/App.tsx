@@ -9,7 +9,7 @@ import {$authError, setToken} from "./@/todos/model";
 import {useStore} from "effector-react";
 
 function App() {
-    const {token, login, logout, userId, ready} = useAuth();
+    const {token, login, logout, userId, ready, email} = useAuth();
     const authError = useStore($authError);
     const isAuthenticated = !!token && !authError;
     const routes = useRoutes(isAuthenticated);
@@ -28,7 +28,7 @@ function App() {
 
     return (
         <AuthContext.Provider value={{
-            token, login, logout, userId, isAuthenticated
+            token, login, logout, userId, isAuthenticated, email
         }}>
             <Router>
                 {routes}

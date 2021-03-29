@@ -43,9 +43,6 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
     const [allowRenaming, setAllowRenaming] = useState(false);
     const [radio, setRadio] = useState<string>('All');
     const [chosenTasks, setChosenTasks] = useState<any>([]);
-    const isLoaderVisible = useStore($isLoaderVisible);
-    const isRequestPending = useStore($isRequestPending);
-
 
     useEffect(() => {
         switch (radio) {
@@ -257,7 +254,7 @@ export const Todo = ({id, todoName, tasks}: TodoProps) => {
 
             <div className="todo-main">
                 {
-                    !tasks.length &&
+                    (!tasks.length && !isAddTaskPending) &&
                     <div className="no-tasks">
                         No tasks added
                     </div>

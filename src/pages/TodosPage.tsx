@@ -22,7 +22,7 @@ import {
     $todos,
     getAllTodos,
     onAddNewTodo,
-    onNewTodoNameChange,
+    onNewTodoNameChange, setTodos,
     setToken
 } from "../@/todos/model";
 import {useStore} from "effector-react";
@@ -51,6 +51,10 @@ const Button = styled(NativeButton)`
 }
 `;
 
+const Email = styled.span`
+  margin: 2px 10px 0 0;
+`;
+
 export function TodosPage() {
     const auth = useContext(AuthContext);
     const history = useHistory();
@@ -67,6 +71,9 @@ export function TodosPage() {
 
     useEffect(() => {
         getAllTodos();
+        return () => {
+            setTodos([]);
+        }
     }, []);
 
     const logoutHandler = (event: any) => {
@@ -76,7 +83,7 @@ export function TodosPage() {
     }
 
     const addNewTodo = (e: MouseEvent<HTMLButtonElement>) => {
-        if(newTodoName.trim().length){
+        if (newTodoName.trim().length) {
             onAddNewTodo(e)
         }
     }
@@ -95,6 +102,7 @@ export function TodosPage() {
                         <span className="page-header">Todo List</span>
                     </div>
                     <div className="user">
+                        <Email>{auth && auth.email}</Email>
                         <img className="logout-icon" src={logout} alt="Logout icon"/>
                         <a className="logout-link" href="/" onClick={logoutHandler}>Logout</a>
                     </div>
@@ -147,9 +155,9 @@ export function TodosPage() {
             }
             {
                 !isLoaderVisible && !todos.length &&
-                    <div className="no-todos">
-                        You don't have any todos now.
-                    </div>
+                <div className="no-todos">
+                    You don't have any todos now.
+                </div>
             }
         </Container>
     );

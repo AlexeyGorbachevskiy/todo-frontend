@@ -226,7 +226,7 @@ export const Task = ({id, isAddTaskPending, todoId, name, setAddTaskPending, isC
             <TaskWrapper
                 style={checkbox ? {backgroundColor: 'rgba(35,91,89, 0.5)'} : {}}
                 className="task"
-                draggable={!isRequestPending}
+                draggable={!isRequestPending && !isAddTaskPending && !renameTaskPending}
                 onDragStart={(e) => dragStartHandler(e, todoId, id)}
                 onDragEnter={dragEnterHandler}
                 onDragOver={(e) => dragTaskOverHandler(e)}
